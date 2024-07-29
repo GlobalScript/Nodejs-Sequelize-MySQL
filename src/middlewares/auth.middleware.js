@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-exports.authenticateUser = async (req, res, next) => {
+exports.authMiddleware = async (req, res, next) => {
     const token = req.headers['authorization'];
     if (!token) {
         return res.status(401).send({ error: 'Token is required' });

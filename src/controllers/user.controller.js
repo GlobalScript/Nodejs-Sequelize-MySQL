@@ -3,15 +3,16 @@ const bcrypt = require('bcryptjs');
 const {Op} = require('sequelize');
 
 exports.changePassword = async (req, res) => {
-    const { nickname, oldPassword, newPassword, confirmNewPassword } = req.body;
+    const userId = req.userId;
+    const { oldPassword, newPassword, confirmNewPassword } = req.body;
     try {
-        if (!nickname || !oldPassword || !newPassword || !confirmNewPassword) {
-            return res.status(400).send({ error: 'Not all required data was received' });
+        if (!oldPassword || !newPassword || !confirmNewPassword) {
+            return res.status(400).send({ error: 'Not all required data: oldPassword, newPassword, confirmNewPassword was received' });
         }
         if (newPassword !== confirmNewPassword) {
-            return res.status(400).send({ error: 'New passwords do not match' });
+            return res.status(400).send({ error: 'confirmNewPassword do not match' });
         }
-        const user = await db.user.findOne({ where: { nickname } });
+        const user = await db.user.findOne({ where: userId });
         if (!user) {
             return res.status(400).send({ error: 'User not found' });
         }
@@ -28,12 +29,13 @@ exports.changePassword = async (req, res) => {
 };
 
 exports.changePhoneNumber = async (req, res) => {
-    const { nickname, password, newPhoneNumber } = req.body;
+    const userId = req.userId;
+    const { password, newPhoneNumber } = req.body;
     try {
-        if (!nickname || !password || !newPhoneNumber) {
-            return res.status(400).send({ error: 'Not all required data was received' });
+        if (!password || !newPhoneNumber) {
+            return res.status(400).send({ error: 'Not all required data: password, newPhoneNumber' });
         }
-        const user = await db.user.findOne({ where: { nickname } });
+        const user = await db.user.findOne({ where: userId });
         if (!user) {
             return res.status(400).send({ error: 'User not found' });
         }
@@ -49,9 +51,13 @@ exports.changePhoneNumber = async (req, res) => {
 };
 
 exports.updateUserInfo = async (req, res) => {
-    const { nickname, password, firstname, lastname, avatar } = req.body;
+    const userId = req.userId;
+    const { password, firstname, lastname, avatar } = req.body;
+    if (!password) {
+        return res.status(400).send({ error: 'Please ensure that the password is provided.' });
+    }
     try {
-        const user = await db.user.findOne({ where: { nickname } });
+        const user = await db.user.findOne({ where: userId });
         if (!user) {
             return res.status(400).send({ error: 'User not found' });
         }
@@ -60,9 +66,9 @@ exports.updateUserInfo = async (req, res) => {
             return res.status(400).send({ error: 'Incorrect password' });
         }
         await user.update({
-            firstname,
-            lastname,
-            avatar
+            firstname: firstname || user.firstname,
+            lastname: lastname || user.lastname,
+            avatar: avatar || user.avatar
         });
         res.status(200).json({ message: 'User information updated successfully'});
     } catch (err) {
@@ -73,6 +79,9 @@ exports.updateUserInfo = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     const { nickname, password } = req.body;
     const userId = req.userId;
+    if (!password || !nickname) {
+        return res.status(400).send({ error: 'Not all required data: password, nickname was received' });
+    }
     try {
         const user = await db.user.findByPk(userId);
         if (!user) {
@@ -121,7 +130,7 @@ exports.findUser = async (req, res) => {
         if (!user) {
             return res.status(404).send({ error: 'User not found' });
         }
-        res.status(200).json({ user });
+        res.status(200).json(user);
     } catch (err) {
         res.status(500).send({ error: err.message });
     }

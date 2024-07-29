@@ -10,6 +10,12 @@ module.exports = (sequelize, DataTypes) => {
         through: 'user_roles',
         onDelete: 'CASCADE',
       });
+      User.hasMany(models.order, {
+        onDelete: 'CASCADE',
+      });
+      User.hasOne(models.basket, {
+        onDelete: 'CASCADE',
+      });
     }
   }
   User.init({

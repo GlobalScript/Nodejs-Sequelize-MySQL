@@ -2,15 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const routes = require("./src/routes/index");
 
-
 const CORS_DOMAIN_1 = process.env.CORS_DOMAIN_1;
 const CORS_DOMAIN_2 = process.env.CORS_DOMAIN_2;
 const PORT = process.env.PORT;
 
 const app = express();
 
-const db = require("./src/models/index");
-db.sequelize.sync().then(() => console.log("Sync DB"));
+// const db = require("./src/models/index");
+// db.sequelize.sync({force: false}).then(() => console.log("Sync DB"));
+
 
 const corsOptions = {
     origin: [CORS_DOMAIN_1, CORS_DOMAIN_2].filter(Boolean),
