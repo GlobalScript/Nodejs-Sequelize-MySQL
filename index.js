@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const routes = require("./src/routes/index");
+const path = require('path');
 
 const CORS_DOMAIN_1 = process.env.CORS_DOMAIN_1;
 const CORS_DOMAIN_2 = process.env.CORS_DOMAIN_2;
@@ -23,12 +24,14 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(routes);
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`);
-});
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get("/", (req, res) => {
-    res.json({message: `Welcome to application. ${PORT}`});
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}.`);
 });
 
 app.use((req, res) => {

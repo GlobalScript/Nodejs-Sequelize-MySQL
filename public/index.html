@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Store</title>
+    <link rel="stylesheet" href="css/preloader.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav class="index-nav">
+    <h1><a href="index.html">Product Store</a></h1>
+    <div class="nav-filters">
+        <label for="category">Category:</label>
+        <select id="category">
+            <option value="">All</option>
+            <option value="dishes">Dishes</option>
+            <option value="drinks">Drinks</option>
+            <option value="desserts">Desserts</option>
+        </select>
+        <label for="sort">Sort by price:</label>
+        <select id="sort">
+            <option value="">None</option>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </div>
+    <div class="nav-links">
+        <a href="signup.html">Sign Up</a>
+        <a href="signin.html">Sign In</a>
+        <a href="basket.html">Basket</a>
+        <button id="logout">Logout</button>
+    </div>
+    <div id="user-name"></div>
+</nav>
+<div id="product-list" class="product-list"></div>
+<div class="preloader" style="display: none;">
+    <div class="spinner"></div>
+</div>
+<script src="scripts/helper.js"></script>
+<script src="scripts/script.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 'use strict';
 
-const {Model} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
+
   User.init({
     firstname: {
       type: DataTypes.STRING,
@@ -25,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: {
           args: [1, 50],
-          msg: "First name must be at least 1 characters long"
+          msg: "First name must be at least 1 character long"
         },
         isAlpha: {
           msg: "First name must contain only letters"
@@ -38,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: {
           args: [1, 50],
-          msg: "Last name must be at least 1 characters long"
+          msg: "Last name must be at least 1 character long"
         },
         isAlpha: {
           msg: "Last name must contain only letters"
@@ -55,15 +56,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     avatar: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     phone: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         isCorrectPhoneNumber(value) {
-          if (!/^\+380\d{9}$/.test(value)) {
-            throw new Error('Invalid phone number format');
+          if (!/^\+38\s\d{3}\s\d{3}\s\d{2}\s\d{2}$/.test(value)) {
+            throw new Error('Invalid phone number format. Expected format: +38 098 443 25 54');
           }
         },
       },
@@ -72,5 +73,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'user',
   });
+
   return User;
 };
