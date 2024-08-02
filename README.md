@@ -1,4 +1,30 @@
-# Nodejs-Sequelize-MySQL
+# Project Overview
+
+This project is created using Node.js, Sequelize, and MySQL. It includes functionality for creating and editing products in the database, placing orders, editing user information, and deleting personal accounts. The project also features role-based access control for different parts and options of the site.
+
+## Project Goals
+
+The main idea of the project is to explore ways to interact with relational databases, link tables, and perform cascading deletions using an ORM (Object-Relational Mapping).
+
+## Features
+
+- **Product Management**: Create and edit products in the database.
+- **Order Management**: Place and manage orders.
+- **User Management**: Edit user information and delete personal accounts.
+- **Role-Based Access Control**: Differentiate access to site parts and options based on user roles.
+
+## Demo Site
+
+To showcase some of the backend options, a simple site is available at:
+[this link](https://nodejs-sequelize-my-sql.vercel.app)
+
+### Admin Access
+
+To log in as an admin:
+- **Nickname**: Admin
+- **Password**: 123123
+
+**Domain**: [https://nodejs-sequelize-my-sql.vercel.app](https://nodejs-sequelize-my-sql.vercel.app)
 
 | Methods | Path                      | Data                       | Middleware              | Description                            |
 |---------|---------------------------|----------------------------|-------------------------|----------------------------------------|
@@ -106,3 +132,5 @@
 |         |                           | {                          |                         |                                        |
 | POST    | /orders/find-order        | userId: number             | accessRole()            | Searching for an order by user ID      |
 |         |                           | }                          |                         |                                        |
+| GET     | /orders/details/:orderId  | -------                    | authMiddleware          |  Retrieving information about the      |
+|         |                           |                            |                         |  authenticated user's own orders       |

@@ -4,7 +4,7 @@ exports.createProduct = async (req, res) => {
     try {
         const {title, price, discount, description, image, category, popular, isNew} = req.body;
         if (!title || !price || !description || !category) {
-            return res.status(400).json({error: "Product properties such as title, price, description, and category must be provided."});
+            return res.status(400).json({message: "Product properties such as title, price, description, and category must be provided."});
         }
         let finalPrice = price;
         if (discount && discount > 0) {
@@ -24,14 +24,14 @@ exports.createProduct = async (req, res) => {
         });
         return res.status(201).json(product);
     } catch (error) {
-        return res.status(500).json({error: "Could not create product"});
+        return res.status(500).json({message: "Internal server error: createProduct", error});
     }
 };
 
 exports.updateProduct = async (req, res) => {
     const {title, price, discount, description, image, category, popular, isNew, productId} = req.body;
     if (!title || !price || !description || !category || !productId) {
-        return res.status(400).json({error: "Product properties such as title, price, description, productId, and category must be provided."});
+        return res.status(400).json({message: "Product properties such as title, price, description, productId, and category must be provided."});
     }
     try {
         let finalPrice = price;
@@ -41,7 +41,7 @@ exports.updateProduct = async (req, res) => {
         }
         const product = await db.goods.findByPk(productId);
         if (!product) {
-            return res.status(400).send({error: 'Product not found'});
+            return res.status(400).send({message: 'Product not found'});
         }
         const updatedProduct = await product.update({
             title,
@@ -56,24 +56,24 @@ exports.updateProduct = async (req, res) => {
         });
         return res.status(200).json(updatedProduct);
     } catch (error) {
-        return res.status(500).json({error: "Could not update product"});
+        return res.status(500).json({message: "Internal server error: updateProduct", error});
     }
 };
 
 exports.deleteProductById = async (req, res) => {
     const {productId} = req.body;
     if (!productId) {
-        return res.status(400).json({error: 'Product ID is missing'});
+        return res.status(400).json({message: 'Product ID is missing'});
     }
     try {
         const product = await db.goods.findByPk(productId);
         if (!product) {
-            return res.status(400).send({error: 'Product not found'});
+            return res.status(400).send({message: 'Product not found'});
         }
         await product.destroy();
         return res.status(200).json({message: "Product deleted successfully"});
     } catch (error) {
-        return res.status(500).json({error: "Could not delete product"});
+        return res.status(500).json({message: "Internal server error: deleteProductById", error});
     }
 };
 
@@ -82,20 +82,20 @@ exports.getAllProducts = async (req, res) => {
         const products = await db.goods.findAll();
         return res.status(200).json(products);
     } catch (error) {
-        return res.status(500).json({error: "Could not fetch products"});
+        return res.status(500).json({message: "Internal server error: getAllProducts", error});
     }
 };
 
 exports.getProductsByCategory = async (req, res) => {
     const category = req.params.category;
     if (!category) {
-        return res.status(400).json({error: 'Category is missing'});
+        return res.status(400).json({message: 'Category is missing'});
     }
     try {
         const products = await db.goods.findAll({where: {category}});
         return res.json(products);
     } catch (error) {
-        return res.status(500).json({error: 'Internal server error'});
+        return res.status(500).json({message: "Internal server error: getProductsByCategory", error});
     }
 };
 
@@ -115,7 +115,7 @@ exports.getProductsByPriceAsc = async (req, res) => {
         }
         return res.json(products);
     } catch (error) {
-        return res.status(500).json({error: 'Internal server error'});
+        return res.status(500).json({message: "Internal server error: getProductsByPriceAsc", error});
     }
 };
 
@@ -135,7 +135,7 @@ exports.getProductsByPriceDesc = async (req, res) => {
         }
         return res.json(products);
     } catch (error) {
-        return res.status(500).json({error: 'Internal server error'});
+        return res.status(500).json({message: "Internal server error: getProductsByPriceDesc", error});
     }
 };
 

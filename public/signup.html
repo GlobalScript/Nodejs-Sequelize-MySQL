@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="css/preloader.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav>
+    <h1><a href="index.html">Product Store</a></h1>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+    </div>
+</nav>
+<div class="form-container">
+    <h2>Sign Up</h2>
+    <form id="signup-form">
+        <label for="firstname">First Name:</label>
+        <input type="text" id="firstname" name="firstname" required>
+
+        <label for="lastname">Last Name:</label>
+        <input type="text" id="lastname" name="lastname" required>
+
+        <label for="nickname">Nickname:</label>
+        <input type="text" id="nickname" name="nickname" required>
+
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" name="phone" required placeholder="+38 099 000 00 00">
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+        <button type="submit">Sign Up</button>
+    </form>
+</div>
+<div class="preloader" style="display: none;">
+    <div class="spinner"></div>
+</div>
+<script src="scripts/helper.js"></script>
+<script src="scripts/auth.js"></script>
+</body>
+</html>

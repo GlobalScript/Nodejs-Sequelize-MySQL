@@ -3,18 +3,20 @@ const OrderStatus = require('../config/constants');
 
 exports.createOrder = async (req, res) => {
     const userId = req.userId;
-    const {deliveryDate} = req.body;
+    const { deliveryDate } = req.body;
     if (!deliveryDate) {
-        return res.status(400).json({error: "property deliveryDate is required"});
+        return res.status(400).json({ message: "property deliveryDate is required" });
     }
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(deliveryDate)) {
-        return res.status(400).json({error: "Invalid date format. Date should be in format 'YYYY-MM-DD'"});
+        return res.status(400).json({ message: "Invalid date format. Date should be in format 'YYYY-MM-DD'" });
     }
     const currentDate = new Date();
     const selectedDate = new Date(deliveryDate);
+    currentDate.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
     if (selectedDate < currentDate) {
-        return res.status(400).json({error: "Order date cannot be in the past"});
+        return res.status(400).json({ message: "Order date cannot be in the past" });
     }
     try {
         const basket = await db.basket.findOne({
@@ -30,8 +32,9 @@ exports.createOrder = async (req, res) => {
             }]
         });
         if (!basket || !basket.goods.length) {
-            return res.status(400).json({error: 'Basket is empty'});
+            return res.status(400).json({ message: 'Basket is empty' });
         }
+
         let totalPrice = basket.goods.reduce((acc, item) => {
             acc += parseFloat(item.dataValues.subtotal);
             return acc;
@@ -52,12 +55,54 @@ exports.createOrder = async (req, res) => {
                 price: item.finalPrice,
             });
         }
-        await db.basket.destroy({where: {userId}});
-        res.status(201).json({message: 'Order created successfully'});
+        await db.basket.destroy({ where: { userId } });
+        res.status(201).json({
+            message: 'Order created successfully',
+            orderId: order.id
+        });
     } catch (error) {
-        res.status(500).json({message: 'Internal server error', error});
+        res.status(500).json({ message: "Internal server error: createOrder", error });
     }
 };
+
+exports.getLastOrderDetails = async (req, res) => {
+    const userId = req.userId;
+    const { orderId } = req.params;
+    try {
+        const user = await db.user.findByPk(userId, {
+            attributes: ['firstname', 'lastname', 'phone'],
+        });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        const order = await db.order.findOne({
+            where: { id: orderId, userId: userId },
+            include: [{
+                model: db.order_item,
+                attributes: ['productId', 'title', 'image', 'quantity', 'price']
+            }]
+        });
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found or you do not have access to this order' });
+        }
+        res.status(200).json({
+            user: {
+                firstName: user.firstname,
+                lastName: user.lastname,
+                phone: user.phone
+            },
+            order: {
+                id: order.id,
+                totalPrice: order.totalPrice,
+                deliveryDate: order.deliveryDate,
+                items: order.order_items
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error: getLastOrderDetails", error });
+    }
+};
+
 
 exports.getAllOrders = async (req, res) => {
     try {
@@ -75,18 +120,18 @@ exports.getAllOrders = async (req, res) => {
         });
         res.status(200).json(orders);
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
+        res.status(500).json({message: "Internal server error: getAllOrders", error});
     }
 };
 
 exports.getOrdersByUserId = async (req, res) => {
-    const { userId } = req.body;
+    const {userId} = req.body;
     if (!userId) {
-        return res.status(400).json({error: "userId is required"});
+        return res.status(400).json({message: "userId is required"});
     }
     try {
         const orders = await db.order.findAll({
-            where: { userId },
+            where: {userId},
             include: [
                 {
                     model: db.order_item,
@@ -98,10 +143,10 @@ exports.getOrdersByUserId = async (req, res) => {
             ]
         });
         if (!orders.length) {
-            return res.status(404).json({ message: 'No orders found for this user' });
+            return res.status(404).json({message: 'No orders found for this user'});
         }
         res.status(200).json(orders);
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
+        res.status(500).json({message: "Internal server error: getOrdersByUserId", error});
     }
 };

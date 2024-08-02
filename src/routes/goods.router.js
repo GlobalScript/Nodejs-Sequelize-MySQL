@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.get('/all-products', getAllProducts);
 router.get('/category/:category', getProductsByCategory);
-router.get('/ask/:category?', getProductsByPriceAsc);
+router.get('/asc/:category?', getProductsByPriceAsc);
 router.get('/desc/:category?', getProductsByPriceDesc);
 
 router.post('/create-product', authMiddleware, accessRole(Roles.ADMIN), createProduct);
